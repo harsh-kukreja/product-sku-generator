@@ -65,6 +65,7 @@ $(document).ready(function() {
             initializeSelect2()
         } else  {
             $('.option').hide()
+            counter = 0;
             $('.stock').html(stock);
             $('.option-content').empty()
 
