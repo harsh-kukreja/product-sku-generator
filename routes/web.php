@@ -39,5 +39,12 @@ Route::group(['middleware' => 'auth'], function () {
 	 Route::get('table-list', function () {return view('pages.tables');})->name('table');
 	Route::put('profile/password', ['as' => 'profile.password', 'uses' => 'App\Http\Controllers\ProfileController@password']);
 
+    Route::get('/product/datatables', [BaseProductController::class, 'datatables'])->name('product.datatables');
+    Route::get('/product/{id}/sku', [BaseProductController::class, 'productSku'])->name('product.sku');
+    Route::resource('/product', BaseProductController::class)->only(['index', 'create', 'store']);
+
+    Route::delete('/sku/{id}', [ProductPermuteController::class, 'destroy'])->name('product.sku.destroy');
+    Route::get('/product/{id}/sku/datatables', [ProductPermuteController::class, 'datatables'])->name('product.sku.datatables');
+
 });
 
