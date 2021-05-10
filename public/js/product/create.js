@@ -12,6 +12,17 @@ $(document).ready(function() {
         return true
     })
 
+    const stock = `<div class="col-6">
+                        <div class="form-group">
+                            <label for="productName">Product Stock <label
+                                    class="text-danger">*</label> </label>
+                            <input type="text" class="form-control" name="product_stock"
+                                   id="product_stock"
+                                   required
+                                   value="${oldProductStock}"
+                                   placeholder="Enter Product stock">
+                        </div>
+                    </div>`
     initializeSelect2()
     const  addSelect2 = (counter)  =>  `<div class="row mt-3 remove-${counter}" >
                                                <div class="col-4">
@@ -50,10 +61,13 @@ $(document).ready(function() {
         if ($("input:radio[name='is_variant']:checked").val() === "1") {
             $('.option').show()
             $('.option-content').append(addSelect2(counter++));
+            $('.stock').empty()
             initializeSelect2()
         } else  {
             $('.option').hide()
+            $('.stock').html(stock);
             $('.option-content').empty()
+
         }
     });
 })
