@@ -13,6 +13,10 @@ $(function() {
         columns: [
             {title: "SKU", data: 'sku'},
             ...myColumns,
+            {title: "Price", data: 'price'},
+            {title: "stock", data: 'stock'},
+            {title: "description", data: 'description'},
+            {title: "image", data: 'image'},
             {title: "Edit", data: 'edit'},
             {title: "Delete", data: 'delete'},
 
