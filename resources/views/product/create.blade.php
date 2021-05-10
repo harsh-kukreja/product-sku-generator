@@ -102,10 +102,10 @@
                                         <div class="container ">
                                             <div class="row">
                                                 <div class="col-4">
-                                                    <label for="">Option Name</label>
+                                                    <label for="">Variant Name</label>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label for="">Option Value</label>
+                                                    <label for="">Variant Value</label>
                                                 </div>
                                             </div>
                                             <div class="option-content">
