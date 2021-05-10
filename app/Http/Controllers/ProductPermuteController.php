@@ -73,7 +73,8 @@ class ProductPermuteController extends Controller  implements ProductPermuteCont
         $productPermute->description = $validatedData['product_description'];
         $productPermute->updated_by = Auth::user()->id;
         $productPermute->update();
-        return redirect()->back()->with('message', self::SKU_UPDATE_SUCCESSFULLY);
+        return redirect()->route('product.sku.index', ['base_product' => $baseProduct])->with('message',
+            self::SKU_UPDATE_SUCCESSFULLY);
 
     }
 
@@ -130,15 +131,15 @@ class ProductPermuteController extends Controller  implements ProductPermuteCont
                 if (strlen($result['description']) !== 0) {
                     return $result['description'];
                 }
-                return self::CLICK_ON_EDIT_FOR_DESCRIPTION;
+                return ViewHelper::controlText(self::CLICK_ON_EDIT_FOR_DESCRIPTION);
             })
             ->editColumn("image", function ($result) {
                 if ($result["image_url"] !== null && strlen($result["image_url"]) != 0) {
                     return ViewHelper::controlImage($result['image_url']);
                 }
-                return self::CLICK_ON_EDIT_FOR_ADD_IMAGE;
+                return ViewHelper::controlText(self::CLICK_ON_EDIT_FOR_ADD_IMAGE);
             })
-            ->rawColumns(["edit", "delete", "image"])
+            ->rawColumns(["edit", "delete", "image", "description"])
             ->make(true);
     }
 }
