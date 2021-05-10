@@ -59,7 +59,7 @@
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 
     <script>
-        let skuId = {!!$productId !!};
+        let productId = {!!$productId !!};
         let variants = {!!json_encode($variants)!!}
     </script>
     <script src="{{ asset('js/product/view.js') }}"></script>
