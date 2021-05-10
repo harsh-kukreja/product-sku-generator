@@ -1,14 +1,14 @@
-#SKU Generator
+# SKU Generator
 
-##What is SKU?
+## What is SKU?
 A SKU (Stock Keeping Unit) is a distinct type of item for sale such as a product or service, and all attributes
   associated with the item type that distinguish it from other item types. For a product, these attributes can include manufacturer, description, material, size, color, packaging, and warranty terms. 
 
-##About Project
+## About Project
 Used in inventory management, the application allows the admin to create products with their vairants and also
  generate all the possible permutation of the variants i.e the Cartisan product of the variants.
 
-##Getting started
+## Getting started
 
 ## Installation
 
@@ -47,5 +47,5 @@ Generate Storage link
  You can now access the server at http://localhost:8000
  
  
-##Database Schema
+## Database Schema
 ![alt text](square_off_assignment_schema.png)
