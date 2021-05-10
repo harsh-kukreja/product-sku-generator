@@ -198,7 +198,7 @@ class BaseProductController extends Controller implements BaseProductControllerC
      * @throws Exception
      */
     public function datatables() {
-        $product = $this->baseProductQuery->getAllBaseProductsWithStock();
+        $product = $this->baseProductQuery->getAllBaseProducts();
         $productIds = $product->pluck('id');
 
         return DataTables::of($product)
