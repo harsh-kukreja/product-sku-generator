@@ -34,7 +34,14 @@ class ProductPermuteQuery {
             ->join('product_variant_permutes', 'product_permutes.id', '=', 'product_variant_permutes.product_id')
             ->join('variant_values', 'product_variant_permutes.variant_value_id', '=', 'variant_values.id')
             ->join('variants', 'variant_values.variant_id', '=', 'variants.id')
-            ->select(['product_permutes.sku', 'product_permutes.id', 'variant_values.value', 'variants.name'])
+            ->select(['product_permutes.sku',
+                'product_permutes.id',
+                'variant_values.value',
+                'variants.name',
+                'product_permutes.stock',
+                'product_permutes.price',
+                'product_permutes.image_url',
+                'product_permutes.description'])
             ->get();
     }
 }
