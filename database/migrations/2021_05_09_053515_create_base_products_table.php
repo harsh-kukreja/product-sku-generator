@@ -16,8 +16,7 @@ class CreateBaseProductsTable extends Migration
         Schema::create('base_products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('stock');
-            $table->unsignedBigInteger('mrp');
+            $table->unsignedBigInteger('price');
             $table->tinyInteger('has_variant');
             $table->string('image_url');
             $table->string('description');
