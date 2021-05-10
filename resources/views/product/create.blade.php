@@ -106,6 +106,8 @@
                                         </div>
 
                                     </div>
+                                    <div class="stock">
+                                    </div>
                                     <div class="option  ">
                                         <div class="container ">
                                             <div class="row">
@@ -158,6 +160,12 @@
 @endsection
 
 @push('js')
+    <script>
+        let oldProductStock = '';
+        @if (old('product_stock'))
+            oldProductStock = "{{old('product_stock')}}"
+        @endIf
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
     <script src="{{ asset('js/product/create.js') }}"></script>
     <script src="{{ asset('argon') }}/vendor/chart.js/dist/Chart.min.js"></script>
