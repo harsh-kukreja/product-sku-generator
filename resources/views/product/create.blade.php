@@ -52,17 +52,7 @@
                                                        placeholder="Enter Product price">
                                             </div>
                                         </div>
-                                        <div class="col-6">
-                                            <div class="form-group">
-                                                <label for="productName">Product Stock <label
-                                                        class="text-danger">*</label> </label>
-                                                <input type="text" class="form-control" name="product_stock"
-                                                       id="product_stock"
-                                                       required
-                                                       value="{{ old('product_stock') }}"
-                                                       placeholder="Enter Product stock">
-                                            </div>
-                                        </div>
+
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="productName">Product Description <label
