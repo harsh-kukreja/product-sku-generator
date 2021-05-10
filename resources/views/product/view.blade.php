@@ -62,7 +62,7 @@
         let skuId = {!!$productId !!};
         let variants = {!!json_encode($variants)!!}
     </script>
-    <script src="{{ asset('js/product-sku/view.js') }}"></script>
+    <script src="{{ asset('js/product/view.js') }}"></script>
     <script src="{{ asset('argon') }}/vendor/chart.js/dist/Chart.min.js"></script>
     <script src="{{ asset('argon') }}/vendor/chart.js/dist/Chart.extension.js"></script>
 @endpush
