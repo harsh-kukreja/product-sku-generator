@@ -9,10 +9,11 @@ $(function() {
     productTable.DataTable({
         processing: true,
         serverSide: true,
-        ajax:  `/product/${skuId}/sku/datatables`,
+        ajax:  `/product/${productId}/sku/datatables`,
         columns: [
             {title: "SKU", data: 'sku'},
             ...myColumns,
+            {title: "Edit", data: 'edit'},
             {title: "Delete", data: 'delete'},
 
         ]
@@ -20,6 +21,6 @@ $(function() {
 
     productTable.on('click', '.delete', function(e) {
         $id = $(this).attr('id');
-        $('#delete_form').attr('action', '/sku/' + $id);
+        $('#delete_form').attr('action', '/product/'+ productId +'/sku/' + $id);
     });
 })
