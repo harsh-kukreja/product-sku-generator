@@ -104,6 +104,10 @@ class ProductPermuteController extends Controller  implements ProductPermuteCont
             $product = [
                 "sku" => $productPermute[$i]->sku,
                 "id" => $productPermute[$i]->id,
+                "stock" => $productPermute[$i]->stock,
+                "image_url" => $productPermute[$i]->image_url,
+                "description" => $productPermute[$i]->description,
+                "price" => $productPermute[$i]->price,
             ];
 
             $productVariants = array();
@@ -122,7 +126,19 @@ class ProductPermuteController extends Controller  implements ProductPermuteCont
             ->addColumn("edit", function ($result) use(&$id) {
                 return ViewHelper::controlLinkButton("fa fa-pencil-alt", "btn-success text-white", $result['id'], "/product/$id/sku/".$result['id']."/edit", "edit");
             })
-            ->rawColumns(["edit", "delete"])
+            ->editColumn("description", function ($result) {
+                if (strlen($result['description']) !== 0) {
+                    return $result['description'];
+                }
+                return self::CLICK_ON_EDIT_FOR_DESCRIPTION;
+            })
+            ->editColumn("image", function ($result) {
+                if ($result["image_url"] !== null && strlen($result["image_url"]) != 0) {
+                    return ViewHelper::controlImage($result['image_url']);
+                }
+                return self::CLICK_ON_EDIT_FOR_ADD_IMAGE;
+            })
+            ->rawColumns(["edit", "delete", "image"])
             ->make(true);
     }
 }
