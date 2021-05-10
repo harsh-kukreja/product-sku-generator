@@ -12,6 +12,7 @@ use App\Models\ProductVariant;
 use App\Models\ProductVariantPermute;
 use App\Models\Variant;
 use App\Models\VariantValue;
+use App\Queries\BaseProductQuery;
 use App\Queries\ProductPermuteQuery;
 use App\Queries\ProductVariantQuery;
 use Exception;
@@ -26,18 +27,22 @@ class BaseProductController extends Controller implements BaseProductControllerC
     protected SKUGenerator $skuGenerator;
     protected ProductVariantQuery $productVariantQuery;
     protected ProductPermuteQuery $productPermuteQuery;
+    protected BaseProductQuery $baseProductQuery;
 
     /**
      * BaseProductController constructor.
      * @param SKUGenerator $skuGenerator
      * @param ProductVariantQuery $productVariantQuery
      * @param ProductPermuteQuery $productPermuteQuery
+     * @param BaseProductQuery $baseProductQuery
      */
-    public function __construct(SKUGenerator $skuGenerator, ProductVariantQuery $productVariantQuery, ProductPermuteQuery $productPermuteQuery) {
+    public function __construct(SKUGenerator $skuGenerator, ProductVariantQuery $productVariantQuery, ProductPermuteQuery $productPermuteQuery, BaseProductQuery $baseProductQuery) {
         $this->skuGenerator = $skuGenerator;
         $this->productVariantQuery = $productVariantQuery;
         $this->productPermuteQuery = $productPermuteQuery;
+        $this->baseProductQuery = $baseProductQuery;
     }
+
 
     /**
      * Shows all the products
@@ -62,6 +67,7 @@ class BaseProductController extends Controller implements BaseProductControllerC
      * @return RedirectResponse
      */
     public function store(BaseProductRequest $request): RedirectResponse {
+        $createdById = Auth::user()->id;
         $validatedData = $request->validated();
         $image = $request->file('product_image');
         $imageName = $validatedData['product_name'] . '-' . time() . '.' . $image->getClientOriginalExtension();
@@ -70,12 +76,11 @@ class BaseProductController extends Controller implements BaseProductControllerC
         //Creating Base Product
         $baseProduct = BaseProduct::create([
             'name' => $validatedData['product_name'],
-            'mrp' => $validatedData['product_price'],
-            'stock' => $validatedData['product_stock'],
+            'price' => $validatedData['product_price'],
             'description' => $validatedData['product_description'],
             'has_variant' => $validatedData['is_variant'],
             'image_url' => Storage::url("/images/products/" . $imageName),
-            'created_by' => Auth::user()->id
+            'created_by' => $createdById
         ]);
 
 
@@ -95,21 +100,21 @@ class BaseProductController extends Controller implements BaseProductControllerC
                 } else {
                     $variant = Variant::create([
                         'name' => strtoupper($optionName),
-                        'created_by' => Auth::user()->id
+                        'created_by' => $createdById
                     ]);
                     $variant_id = $variant->id;
                 }
 
                 //Creating Variant Values if it does not exist
                 for ($j = 0; $j < count($optionValue); $j++) {
-                    if (VariantValue::where('variant_id', $variant_id)->where('value', strtoupper($optionValue[$j]))->exists
-                    ()) {
+                    if (VariantValue::where('variant_id', $variant_id)->where('value', strtoupper($optionValue[$j]))
+                        ->exists()) {
                         array_push($variant_values_id, VariantValue::where('value', strtoupper($optionValue[$j]))->first()->id);
                     } else {
                         $variant_value = VariantValue::create([
                             'variant_id' => $variant_id,
                             'value' => strtoupper($optionValue[$j]),
-                            'created_by' => Auth::user()->id
+                            'created_by' => $createdById
                         ]);
                         array_push($variant_values_id, $variant_value->id);
                     }
@@ -122,7 +127,7 @@ class BaseProductController extends Controller implements BaseProductControllerC
                 ProductVariant::create([
                     'base_product_id' => $baseProduct->id,
                     'variant_value_id' => $variant_values_id[$k],
-                    'created_by' => Auth::user()->id
+                    'created_by' => $createdById
                 ]);
             }
 
@@ -135,40 +140,36 @@ class BaseProductController extends Controller implements BaseProductControllerC
             foreach ($sku as $key => $value) {
                 $productPermute = ProductPermute::create([
                     'base_product_id' => $baseProduct->id,
+                    'price' => $baseProduct->price,
                     'sku' => $key,
-                    'created_by' => Auth::user()->id
+                    'created_by' => $createdById
                 ]);
 
                 foreach ($value as $var) {
                      array_push($productVariantPermute, [
                          'product_id' => $productPermute->id,
                          'variant_value_id' => $var[1],
-                         'created_by' => Auth::user()->id
+                         'created_by' => $createdById
                      ]);
                 }
             }
             ProductVariantPermute::insert($productVariantPermute);
+        } else {
+            $validateStock = $request->validate(
+                ['product_stock' => 'required|integer']);
+            ProductPermute::create([
+                'base_product_id' => $baseProduct->id,
+                'price' => $baseProduct->price,
+                'sku' => $baseProduct->name,
+                'stock' => $validateStock['product_stock'],
+                'created_by' => $createdById
+            ]);
         }
 
         if ($validatedData['is_variant'] === self::VARIANT) {
-            return redirect()->route('product.sku', [$baseProduct->id]);
+            return redirect()->route('product.sku.index', [$baseProduct->id]);
         }
         return redirect()->route('product.index')->with('message', self::PRODUCT_CREATED_SUCCESSFULLY);
-    }
-
-
-    /**
-     * Shows generated skus
-     * @param int $id
-     * @return View
-     */
-    public function productSku(int $id): View {
-        $baseProduct = BaseProduct::findOrFail($id);
-        //To dynamically populate columns in the datatables according to the variants of the product
-        $productPermuteVariants = $this->productPermuteQuery->getAllProductVariants($baseProduct->id)->all();
-        return view('product.view', ['productId' => $baseProduct->id, 'product_name' => $baseProduct->name, 'variants'
-        =>
-        $productPermuteVariants]);
     }
 
 
@@ -178,7 +179,7 @@ class BaseProductController extends Controller implements BaseProductControllerC
      * @throws Exception
      */
     public function datatables() {
-        $product = BaseProduct::all();
+        $product = $this->baseProductQuery->getAllBaseProductsWithStock();
 
         return DataTables::of($product)
             ->editColumn('name', function ($product) {
