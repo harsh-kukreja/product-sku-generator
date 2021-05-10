@@ -56,14 +56,13 @@
 @push('js')
 
 
-    <script src="{{ asset('js/select2-wrapper.js') }}"></script>
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 
     <script>
         let skuId = {!!$productId !!};
         let variants = {!!json_encode($variants)!!}
     </script>
-    <script src="{{ asset('js/product-sku/index.js') }}"></script>
+    <script src="{{ asset('js/product-sku/view.js') }}"></script>
     <script src="{{ asset('argon') }}/vendor/chart.js/dist/Chart.min.js"></script>
     <script src="{{ asset('argon') }}/vendor/chart.js/dist/Chart.extension.js"></script>
 @endpush

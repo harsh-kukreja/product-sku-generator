@@ -159,7 +159,6 @@
 
 @push('js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-    <script src="{{ asset('js/select2-wrapper.js') }}"></script>
     <script src="{{ asset('js/product/create.js') }}"></script>
     <script src="{{ asset('argon') }}/vendor/chart.js/dist/Chart.min.js"></script>
     <script src="{{ asset('argon') }}/vendor/chart.js/dist/Chart.extension.js"></script>
