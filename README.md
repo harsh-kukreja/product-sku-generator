@@ -48,4 +48,4 @@ Generate Storage link
  
  
 ## Database Schema
-![alt text](square_off_assignment_schema.png)
+![alt text](database-desgin.png)
