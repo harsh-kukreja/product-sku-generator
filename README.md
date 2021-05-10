@@ -47,5 +47,5 @@ Generate Storage link
  You can now access the server at http://localhost:8000
  
  
-##Database Schema
+## Database Schema
 ![alt text](square_off_assignment_schema.png)
