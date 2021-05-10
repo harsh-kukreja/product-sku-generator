@@ -173,6 +173,24 @@ class BaseProductController extends Controller implements BaseProductControllerC
         return redirect()->route('product.index')->with('message', self::PRODUCT_CREATED_SUCCESSFULLY);
     }
 
+    /**
+     * Added destroy function for product
+     * @param BaseProduct $baseProduct
+     * @return RedirectResponse
+     */
+    public function destroy(BaseProduct $baseProduct): RedirectResponse {
+        ProductVariant::where('base_product_id', $baseProduct->id)->delete();
+
+        $productPermuteIds = ProductPermute::where('base_product_id', $baseProduct->id)->pluck('id');
+        ProductVariantPermute::whereIn('product_id', $productPermuteIds)->delete();
+        ProductPermute::where('base_product_id', $baseProduct->id)->delete();
+
+        $baseProduct->delete();
+
+
+        return redirect()->back()->with('message', self::PRODUCT_CREATED_SUCCESSFULLY);
+    }
+
 
     /**
      * Fetches the data for datatable
@@ -190,6 +208,9 @@ class BaseProductController extends Controller implements BaseProductControllerC
             ->addColumn('image', function ($product) {
                 return ViewHelper::controlImage($product->image_url);
             })
+            ->addColumn("delete", function ($product) {
+                return ViewHelper::controlModalButton("fa fa-trash-alt", "btn-danger", $product->id, "delete", "deleteModal");
+            })
             ->editColumn("has_variant", function ($product) use ($productIds) {
                 $hasVariant = ProductPermute::selectRaw('count(base_product_id) as count')->where('base_product_id',
                     $product->id)->first()->count;
@@ -199,7 +220,7 @@ class BaseProductController extends Controller implements BaseProductControllerC
                 }
                 return "No Variants";
             })
-            ->rawColumns(['has_variant', 'image'])
+            ->rawColumns(['has_variant', 'image', 'delete'])
             ->make(true);
     }
 }

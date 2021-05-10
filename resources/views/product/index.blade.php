@@ -35,6 +35,16 @@
         </div>
 
         @include('layouts.footers.auth')
+        @component('includes.confirm-modal', [
+       "id" => "deleteModal",
+       "title" => "Delete Product",
+       "message" => "Are you sure you want to delete the Product?",
+       "path" => "/product/",
+   ])
+            @slot('method')
+                @method('DELETE')
+            @endslot
+        @endcomponent
     </div>
 @endsection
 

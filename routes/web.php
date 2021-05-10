@@ -42,7 +42,10 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     Route::get('/product/datatables', [BaseProductController::class, 'datatables'])->name('product.datatables');
-    Route::resource('/product', BaseProductController::class)->only(['index', 'create', 'store']);
+    Route::resource('/product', BaseProductController::class)
+        ->parameters([
+            'product' => 'base_product'
+        ])->only(['index', 'create', 'store', 'destroy']);
     Route::get('/product/{id}/sku/datatables', [ProductPermuteController::class, 'datatables'])->name('product.sku.datatables');
     Route::resource('/product/{base_product}/sku', ProductPermuteController::class, [
         'as' => 'product',
