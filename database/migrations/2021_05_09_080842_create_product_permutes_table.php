@@ -19,8 +19,8 @@ class CreateProductPermutesTable extends Migration
             $table->string('sku');
             $table->unsignedBigInteger('stock')->default(0);
             $table->unsignedBigInteger('price')->default(0);
-            $table->text('description')->default("");
-            $table->string('image_url')->default("");
+            $table->text('description')->nullable();
+            $table->string('image_url')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->softDeletes();
