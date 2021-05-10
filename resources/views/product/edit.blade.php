@@ -86,8 +86,7 @@
 
                                         <div class="col-6">
                                             <div class="form-group d-flex flex-column">
-                                                <label for="productName">Upload Product Image <label
-                                                        class="text-danger">*</label></label>
+                                                <label for="productName">Upload Product Image </label>
 
                                                 <div>
                                                     @if($productPermute->image_url)
