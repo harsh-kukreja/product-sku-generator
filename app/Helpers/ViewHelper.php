@@ -17,4 +17,8 @@ class ViewHelper {
         return "<img src='$link' class='img img-thumbnail' alt='Could not load image' />";
     }
 
+    public static function controlText($text) {
+        return "<p class='text-wrap text-xs font-weight-normal text-center mb-0'>".$text."</p>";
+    }
+
 }
