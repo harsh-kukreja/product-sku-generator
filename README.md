@@ -28,6 +28,19 @@ Copy the example env file and make the required configuration changes in the .en
 
     cp .env.example .env
 
+  
+Create a database in mysql terminal name: sku-generator
+
+    create database sku-generator
+
+Edit these fields in .env
+    
+Please put appropriate values in the field 
+    
+    DB_DATABASE=sku-generator
+    DB_USERNAME=root
+    DB_PASSWORD=
+    
 Generate a new application key
 
     php artisan key:generate
