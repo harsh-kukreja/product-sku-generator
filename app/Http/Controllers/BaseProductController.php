@@ -181,6 +181,7 @@ class BaseProductController extends Controller implements BaseProductControllerC
      */
     public function datatables() {
         $product = $this->baseProductQuery->getAllBaseProductsWithStock();
+        $productIds = $product->pluck('id');
 
         return DataTables::of($product)
             ->editColumn('name', function ($product) {
@@ -189,8 +190,10 @@ class BaseProductController extends Controller implements BaseProductControllerC
             ->addColumn('image', function ($product) {
                 return ViewHelper::controlImage($product->image_url);
             })
-            ->editColumn("has_variant", function ($product) {
-                if ($product->has_variant === BaseProduct::VARIANT) {
+            ->editColumn("has_variant", function ($product) use ($productIds) {
+                $hasVariant = ProductPermute::selectRaw('count(base_product_id) as count')->where('base_product_id',
+                    $product->id)->first()->count;
+                if ($hasVariant > 1 ) {
                     return ViewHelper::controlLinkButton('fa fa-eye', 'btn-primary', $product->id,
                         '/product/' . $product->id . '/sku', 'btn');
                 }

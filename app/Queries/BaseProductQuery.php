@@ -21,15 +21,13 @@ class BaseProductQuery {
                 base_products.id,
                 base_products.price,
                 base_products.description,
-                base_products.image_url,
-                base_products.has_variant')
+                base_products.image_url')
             ->groupBy([ 'base_products.name' ,
                 'product_permutes.base_product_id',
                 'base_products.id',
                 'base_products.price',
                 'base_products.description',
-                'base_products.image_url',
-                'base_products.has_variant'])
+                'base_products.image_url'])
             ->get();
     }
 }
