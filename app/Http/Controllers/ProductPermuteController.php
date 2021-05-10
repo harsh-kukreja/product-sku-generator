@@ -4,10 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ViewHelper;
 use App\Http\Controllers\Constants\ProductPermuteControllerConstants;
+use App\Http\Requests\ProductPermuteUpdateRequest;
+use App\Models\BaseProduct;
 use App\Models\ProductPermute;
 use App\Models\ProductVariantPermute;
 use App\Queries\ProductPermuteQuery;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
 
 class ProductPermuteController extends Controller  implements ProductPermuteControllerConstants {
@@ -23,13 +29,63 @@ class ProductPermuteController extends Controller  implements ProductPermuteCont
     }
 
     /**
-     * Remove the specified ProductPermute from storage.
-     * @param int $id
+     * Shows all the products
+     * @param BaseProduct $baseProduct
+     * @return View
+     */
+    public function index(BaseProduct $baseProduct): View {
+        //To dynamically populate columns in the datatables according to the variants of the product
+        $productPermuteVariants = $this->productPermuteQuery->getAllProductVariants($baseProduct->id)->all();
+        return view('product.view', ['productId' => $baseProduct->id, 'product_name' => $baseProduct->name,
+            'variants'=> $productPermuteVariants]);
+    }
+
+
+    /**
+     * Edit page for Product Permute
+     * @param BaseProduct $baseProduct
+     * @param ProductPermute $productPermute
+     * @return View
+     */
+    public function edit(BaseProduct $baseProduct, ProductPermute $productPermute): View {
+        return view('product.edit', compact(['baseProduct', 'productPermute']));
+    }
+
+    /**
+     * Updates the value given by product Permute
+     * @param BaseProduct $baseProduct
+     * @param ProductPermute $productPermute
+     * @param Request $request
      * @return RedirectResponse
      */
-    public function destroy(int $id): RedirectResponse {
-        ProductPermute::findOrFail($id)->delete();
-        ProductVariantPermute::where('product_id', $id)->firstOrFail()->delete();
+    public function update(BaseProduct  $baseProduct, ProductPermute $productPermute, ProductPermuteUpdateRequest $request) {
+        $validatedData = $request->validated();
+        if ($request->has('product_image')) {
+            $image = $request->file('product_image');
+            $imageName = $productPermute->sku . '-'. time() . '.' .
+                $image->getClientOriginalExtension();
+            Storage::disk('public')->putFileAs("/images/products/", $image, $imageName, 'public');
+            $imageUrl = Storage::url("/images/products/" . $imageName);
+            $productPermute->image_url = $imageUrl;
+        }
+        $productPermute->stock = $validatedData['product_stock'];
+        $productPermute->price = ($baseProduct->price + $request['product_price']);
+        $productPermute->description = $validatedData['product_description'];
+        $productPermute->updated_by = Auth::user()->id;
+        $productPermute->update();
+        return redirect()->back()->with('message', self::SKU_UPDATE_SUCCESSFULLY);
+
+    }
+
+    /**
+     * Remove the specified ProductPermute from storage.
+     * @param BaseProduct $baseProduct
+     * @param ProductPermute $productPermute
+     * @return RedirectResponse
+     */
+    public function destroy(BaseProduct $baseProduct, ProductPermute $productPermute): RedirectResponse {
+        ProductVariantPermute::where('product_id', $productPermute->id)->firstOrFail()->delete();
+        $productPermute->delete();
         return redirect()->back()->with('message', self::SKU_DELETED_SUCCESSFULLY);
     }
 
@@ -63,7 +119,10 @@ class ProductPermuteController extends Controller  implements ProductPermuteCont
             ->addColumn("delete", function ($result) {
                 return ViewHelper::controlModalButton("fa fa-trash-alt", "btn-danger", $result['id'], "delete", "deleteModal");
             })
-            ->rawColumns(["delete"])
+            ->addColumn("edit", function ($result) use(&$id) {
+                return ViewHelper::controlLinkButton("fa fa-pencil-alt", "btn-success text-white", $result['id'], "/product/$id/sku/".$result['id']."/edit", "edit");
+            })
+            ->rawColumns(["edit", "delete"])
             ->make(true);
     }
 }
