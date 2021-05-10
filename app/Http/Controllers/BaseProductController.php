@@ -75,7 +75,7 @@ class BaseProductController extends Controller implements BaseProductControllerC
 
         //Creating Base Product
         $baseProduct = BaseProduct::create([
-            'name' => $validatedData['product_name'],
+            'name' => preg_replace("/\s+/", "", $validatedData['product_name']),
             'price' => $validatedData['product_price'],
             'description' => $validatedData['product_description'],
             'has_variant' => $validatedData['is_variant'],
@@ -99,7 +99,7 @@ class BaseProductController extends Controller implements BaseProductControllerC
                     $variant_id = Variant::where('name', strtoupper($optionName))->first()->id;
                 } else {
                     $variant = Variant::create([
-                        'name' => strtoupper($optionName),
+                        'name' => preg_replace("/\s+/", "",strtoupper($optionName)),
                         'created_by' => $createdById
                     ]);
                     $variant_id = $variant->id;
@@ -109,7 +109,8 @@ class BaseProductController extends Controller implements BaseProductControllerC
                 for ($j = 0; $j < count($optionValue); $j++) {
                     if (VariantValue::where('variant_id', $variant_id)->where('value', strtoupper($optionValue[$j]))
                         ->exists()) {
-                        array_push($variant_values_id, VariantValue::where('value', strtoupper($optionValue[$j]))->first()->id);
+                        array_push($variant_values_id, VariantValue::where('variant_id', $variant_id)->where('value',
+                                strtoupper($optionValue[$j]))->first()->id);
                     } else {
                         $variant_value = VariantValue::create([
                             'variant_id' => $variant_id,
