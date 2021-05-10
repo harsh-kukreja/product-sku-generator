@@ -211,14 +211,15 @@ class BaseProductController extends Controller implements BaseProductControllerC
             ->addColumn("delete", function ($product) {
                 return ViewHelper::controlModalButton("fa fa-trash-alt", "btn-danger", $product->id, "delete", "deleteModal");
             })
+            ->addColumn("stock", function ($product) {
+                return $product->productPermutes()->whereNull('deleted_at')->sum('stock');
+            })
             ->editColumn("has_variant", function ($product) use ($productIds) {
-                $hasVariant = ProductPermute::selectRaw('count(base_product_id) as count')->where('base_product_id',
-                    $product->id)->first()->count;
-                if ($hasVariant > 1 ) {
+                if ($product->has_variant === BaseProduct::VARIANT) {
                     return ViewHelper::controlLinkButton('fa fa-eye', 'btn-primary', $product->id,
                         '/product/' . $product->id . '/sku', 'btn');
                 }
-                return "No Variants";
+                return  ViewHelper::controlText('Product Cannot have variants');
             })
             ->rawColumns(['has_variant', 'image', 'delete'])
             ->make(true);
