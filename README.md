@@ -1,5 +1,6 @@
 # SKU Generator
 
+![alt text](sku-generator.gif)
 ## What is SKU?
 A SKU (Stock Keeping Unit) is a distinct type of item for sale such as a product or service, and all attributes
   associated with the item type that distinguish it from other item types. For a product, these attributes can include manufacturer, description, material, size, color, packaging, and warranty terms. 
