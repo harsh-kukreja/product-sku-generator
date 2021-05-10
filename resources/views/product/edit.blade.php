@@ -97,9 +97,6 @@
                                                         image">
                                                      @endif
                                                     <input type="file"
-                                                           @if(!$productPermute->image_url)
-                                                           required
-                                                           @endif
                                                            id="product-image" name="product_image"
                                                            accept="image/png, image/jpeg">
                                                 </div>
